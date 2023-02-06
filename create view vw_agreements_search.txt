@@ -1,0 +1,26 @@
+create view vw_agreements_search
+as 
+SELECT 'agreement' as RowType,lab_agreement.agr_no, lab_agreement.agr_date, lab_agreement.agr_startdate, lab_agreement.agr_value, lab_agreement.main_productcode, lab_tbl_product.productname, lab_agreement.idcode_owner as idcode
+, lab_customer.prefix_name, lab_customer.pname, lab_customer.idcard, lab_customer.passportno, lab_agreement.agr_save_by, lab_agreement.agr_save_date, lab_agreement.agr_save_time
+FROM  lab_agreement INNER JOIN  lab_customer ON lab_agreement.idcode_owner = lab_customer.idcode LEFT OUTER JOIN lab_tbl_product ON lab_agreement.main_productcode = lab_tbl_product.productcode
+UNION ALL
+SELECT 'owner' as RowType,lab_agreement.agr_no, lab_agreement.agr_date, lab_agreement.agr_startdate, lab_agreement.agr_value, lab_agreement.main_productcode, lab_tbl_product.productname, lab_agreement.idcode_owner as idcode, 
+ lab_customer.prefix_name, lab_customer.pname, lab_customer.idcard, lab_customer.passportno, lab_agreement.agr_save_by, lab_agreement.agr_save_date, lab_agreement.agr_save_time
+FROM lab_agreement INNER JOIN lab_customer ON lab_agreement.idcode_owner = lab_customer.idcode LEFT OUTER JOIN lab_tbl_product ON lab_agreement.main_productcode = lab_tbl_product.productcode
+WHERE (lab_agreement.idcode_mother = '') OR (lab_agreement.idcode_mother IS NULL)
+union all
+SELECT 'mother' as RowType,lab_agreement.agr_no, lab_agreement.agr_date, lab_agreement.agr_startdate, lab_agreement.agr_value, lab_agreement.main_productcode, lab_tbl_product.productname, lab_agreement.idcode_mother as idcode
+, lab_customer.prefix_name, lab_customer.pname, lab_customer.idcard, lab_customer.passportno, lab_agreement.agr_save_by, lab_agreement.agr_save_date,lab_agreement.agr_save_time
+FROM lab_agreement INNER JOIN  lab_customer ON lab_agreement.idcode_mother = lab_customer.idcode LEFT OUTER JOIN lab_tbl_product ON lab_agreement.main_productcode = lab_tbl_product.productcode
+WHERE  (lab_agreement.idcode_mother <> '') 
+union all
+SELECT  'father' as RowType,lab_agreement.agr_no, lab_agreement.agr_date, lab_agreement.agr_startdate, lab_agreement.agr_value, lab_agreement.main_productcode, lab_tbl_product.productname, lab_agreement.idcode_father as idcode
+, lab_customer.prefix_name ,lab_customer.pname, lab_customer.idcard, lab_customer.passportno, lab_agreement.agr_save_by, lab_agreement.agr_save_date,lab_agreement.agr_save_time
+FROM lab_agreement INNER JOIN lab_customer ON lab_agreement.idcode_father = lab_customer.idcode LEFT OUTER JOIN lab_tbl_product ON lab_agreement.main_productcode = lab_tbl_product.productcode
+WHERE (lab_agreement.idcode_father <> '')
+union all
+SELECT   'infent' as RowType,lab_agreement.agr_no,lab_agreement.agr_date, lab_agreement.agr_startdate, lab_agreement.agr_value, lab_agreement.main_productcode, lab_tbl_product.productname, lab_agreement.idcode_infent as idcode
+, lab_customer.prefix_name, lab_customer.pname, lab_customer.idcard, lab_customer.passportno, lab_agreement.agr_save_by, lab_agreement.agr_save_date, lab_agreement.agr_save_time
+FROM  lab_agreement INNER JOIN lab_customer ON lab_agreement.idcode_infent = lab_customer.idcode LEFT OUTER JOIN  lab_tbl_product ON lab_agreement.main_productcode = lab_tbl_product.productcode
+WHERE (lab_agreement.idcode_infent <> '')
+go
