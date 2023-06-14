@@ -1,0 +1,7 @@
+/**2023-06-24***/
+alter table lab_agreement
+add isno_have_agreementno varchar(1) default('N'),
+    lab_year int default(0),
+	lab_by nvarchar(50),
+    lab_date date,
+    lab_time nvarchar(8)
